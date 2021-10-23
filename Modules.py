@@ -13,7 +13,7 @@ def signin(k,frm):
     frame1.grid(row=0,column=0)
     l1=Label(frame1,text="Welcome "+str(k)+"!",font="20")
     l1.grid(padx=20,pady=12,row=0,column=0)
-
+    
     user = Label(frame1, text="Name",font="Algerian 16",anchor=W)
     people = Label(frame1, text="No. of people",font="Algerian 16",anchor=W)
 
@@ -27,9 +27,10 @@ def signin(k,frm):
     peopleentry = Entry(frame1, textvariable = peoplevalue)
     userentry.grid(row=1,column=1)
     peopleentry.grid(row=2,column=1)
-    Button(frame1,text="Submit",command = lambda: welcome(frame1,root),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=1)
+    Button(frame1,text="Submit",command = lambda: welcome(frame1,root,k,uservalue.get()),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=1)
 
-def welcome(f,r):
+def welcome(f,r,k,name):
+    
     f.destroy()
     frame2= Frame(r,padx=10,pady=20)
     frame2.grid(row=0,column=0)
@@ -37,7 +38,7 @@ def welcome(f,r):
     #print("Please proceed to table no.",a,"\n","We hope you have a nice experience!!!!")
     l1=Label(frame2,text="Please proceed to table no."+str(a)+"\n"+"\n"+"Click on proceed button below to view menu card"+"\n"+"\n"+"We hope you have a great experience!!!!",font="20")
     l1.grid(padx=20,pady=12,row=4,column=1)
-    Button(frame2,text="Proceed",command = lambda:mnu(frame2,r),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=5,column=1)
+    Button(frame2,text="Proceed",command = lambda:mnu(frame2,r,k,name),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=5,column=1)
 
 
 bev = (        'Regular Tea',
@@ -126,7 +127,7 @@ def ad(k,frme):
         num_lis = num_lis + [1]
     show_item(frme)
 
-def mnu(fr,rt):
+def mnu(fr,rt,k,name):
     fr.destroy()
     frame3= Frame(rt,padx=10,pady=20)
     frame3.grid(row=0,column=0)
@@ -223,15 +224,17 @@ def mnu(fr,rt):
     choosen7.grid(column = 1, row = 18)
     choosen7.current()
     
-    b8 =Button(frame4,text="Done",command = bil,padx=20,pady=10,font="20",bg="grey",fg="white")
+    b8 =Button(frame4,text="Done",command = lambda:bil(rt,k,name),padx=20,pady=10,font="20",bg="grey",fg="white")
     b8.grid(row=10,column=3)
 
-def bil():
+def bil(rt,k,name):
+    rt.destroy()
     rot = Tk()
     rot.geometry("500x500")
     Label(rot,text="Taj Hotel",font="Helvetica 16 bold").grid(column=2,row=0)
     Label(rot,text="Manewada,Nagpur",font="Helvetica 16 bold").grid(column=2,row=1)
     Label(rot,text=(datetime.now())).grid(column=2,row=2)
+    Label(rot,text=name,font="Helvetica 10 bold").grid(column=2,row=3)
     cnt=1
     rw=5
     n_lis = get_order()[0]
@@ -253,4 +256,5 @@ def bil():
     Label(rot,text=('Total Bill:'),font="Helvetica 16 bold").grid(column=2,row=rw+2)
     Label(rot,text=bill,font="Helvetica 16 bold").grid(column=3,row=rw+2)
     Label(rot,text='*********THANK YOU**********',font="Helvetica 16 bold").grid(column=2,row=rw+5)
+    Button(rot,text="next",command=lambda:signin(k,rot)).grid(row=rw+10,column=2)
     rot.mainloop()
