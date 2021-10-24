@@ -31,7 +31,7 @@ def signin(k,frm):
     Button(frame1,text="Submit",command = lambda: welcome(frame1,root),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=1)
 
     label = Label(frame1,font=("Courier", 20, 'bold'), bg="gray", fg="white", bd =12,padx=10,pady=6)
-    label.grid(row =0, column=6)
+    label.grid(row =0, column=2)
 
     def digitalclock():
         text_input = time.strftime("%H:%M:%S")
@@ -44,9 +44,13 @@ def signin(k,frm):
 def welcome(f,r):
     a=random.randrange(1,6)
     #print("Please proceed to table no.",a,"\n","We hope you have a nice experience!!!!")
-    l1=Label(f,text="Please proceed to table no."+str(a)+"\n"+"\n"+"Click on proceed button below to view menu card"+"\n"+"\n"+"We hope you have a great experience!!!!",font="20")
-    l1.grid(padx=20,pady=12,row=4,column=1)
-    Button(f,text="Proceed",command = lambda:mnu(f,r),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=5,column=1)
+    l1=Label(f,text="Please proceed to table no."+str(a),font="20")
+    l1.grid(padx=20,pady=12,row=1,column=2)
+    l2 = Label(f,text="Click on proceed button below to view menu card",font="20")
+    l2.grid(padx=20,pady=12,row=2,column=2)
+    l3 = Label(f,text="We hope you have a great experience!!!!",font="20")
+    l3.grid(padx=20,pady=12,row=3,column=2)
+    Button(f,text="Proceed",command = lambda:mnu(f,r),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=2)
 
 
 bev = (        'Regular Tea',
@@ -116,13 +120,32 @@ def get_order():
     global num_lis
     return [num_lis[1:],od_lis[1:]]
 
+def selected_item(lb,fm):
+    global od_lis
+    global num_lis
+    itm = lb.get(lb.curselection())
+    for i in range(len(itm)):
+        if itm[i]=='*':
+           t = i
+           r = get_order()[1].index(itm[:t-1])
+           if get_order()[0][r]==1:
+               p = od_lis.index(itm[:t-1])
+               od_lis.remove(itm[:t-1])
+               num_lis.pop(p)
+           else:
+               p = od_lis.index(itm[:t-1])
+               num_lis[p] = num_lis[p] -1
+    show_item(fm)
+
 def show_item(fm):
     lisbox = Listbox(fm,width = 30,height = 30)
 
     for i in range(len(get_order()[1])):
-        lisbox.insert(1,str(get_order()[1][i])+" X"+str(get_order()[0][i]))
+        lisbox.insert(i,str(get_order()[1][i])+" *"+str(get_order()[0][i]))
 
     lisbox.grid(row = 0, column = 0)
+    btn =Button(fm,text="REMOVE", command=lambda: selected_item(lisbox,fm))
+    btn.grid(row=0,column=1)
     
 def ad(k,frme):
     global od_lis
