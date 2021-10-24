@@ -291,5 +291,5 @@ def bil(rt,k,name):
     Label(rot,text=('Total Bill:'),font="Helvetica 16 bold").grid(column=2,row=rw+2)
     Label(rot,text=bill,font="Helvetica 16 bold").grid(column=3,row=rw+2)
     Label(rot,text='*********THANK YOU**********',font="Helvetica 16 bold").grid(column=2,row=rw+5)
-    Button(rot,text="next",command=lambda:signin(k,rot)).grid(row=rw+10,column=2)
+    Button(rot,text="NEXT",command=lambda:signin(k,rot)).grid(row=rw+10,column=2)
     rot.mainloop()
