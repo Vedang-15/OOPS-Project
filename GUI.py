@@ -21,10 +21,10 @@ pwdvalue = StringVar()
 userentry = Entry(root, textvariable = uservalue)
 pwdentry = Entry(root,show ='*', textvariable = pwdvalue)
 
-userentry.grid(row=1,column=1)
-pwdentry.grid(row=2,column=1)
+userentry.grid(row=1,column=1,sticky = W)
+pwdentry.grid(row=2,column=1, sticky = W)
 
 bt1 =Button(text="Login",command = lambda:signin(uservalue.get(),root),padx=20,pady=10,font="20",bg="grey",fg="white")
-bt1.grid(row=4,column=1)
+bt1.grid(row=3,column=1,sticky = SW)
 
 root.mainloop()
