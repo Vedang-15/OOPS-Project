@@ -4,8 +4,12 @@ from tkinter import ttk
 import random
 from datetime import datetime
 import time
-
+from classes import *
+import pandas as pd
+info = "XYZ"
+df = pd.DataFrame(columns = ['Name','Contact No.','No. of persons','DOB','Bill'])
 def signin(k,frm):
+    global df
     frm.destroy()
     root = Tk()
     root.geometry("1000x1000")
@@ -23,25 +27,33 @@ def signin(k,frm):
 
     uservalue = StringVar()
     peoplevalue = StringVar()
+    contac = "1234"
 
     userentry = Entry(frame1, textvariable = uservalue)
     peopleentry = Entry(frame1, textvariable = peoplevalue)
     userentry.grid(row=1,column=1)
     peopleentry.grid(row=2,column=1)
-    Button(frame1,text="Submit",command = lambda: welcome(frame1,root,k,uservalue.get()),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=3,column=0,rowspan = 2,columnspan = 2,sticky = SE)
+    Button(frame1,text="Submit",command = lambda: [welcome(frame1,root,k),create(uservalue.get(),peoplevalue.get(),contac)],padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=3,column=0,rowspan = 2,columnspan = 2,sticky = SE)
 
     label = Label(frame1,font=("Courier", 20, 'bold'), bg="gray", fg="white", bd =12,padx=10,pady=6)
     label.grid(row =0, column=2,columnspan = 2,sticky = W)
-
+    Button(frame1,text = "History",command = lambda: print(df),font="20",bg = "green",fg="white").grid(row =0,column = 4)
     def digitalclock():
         text_input = time.strftime("%H:%M:%S")
         label.config(text=text_input)
         label.after(200, digitalclock)
     digitalclock()
 
+def create(a,b,c):
+    global info
+    ins = Customer(a,b,c)
+    info = ins
 
+def add_ins():
+    global df
+    df = df.append({'Name': info.get_name(),'Contact No.': info.get_contactno(),'No. of persons': info.get_no_persons(),'DOB': info.get_date(),'Bill': info.get_bill()},ignore_index = True)
 
-def welcome(f,r,k,name):
+def welcome(f,r,k):
     a=random.randrange(1,6)
     #print("Please proceed to table no.",a,"\n","We hope you have a nice experience!!!!")
     l1=Label(f,text="Please proceed to table no."+str(a),font="20")
@@ -50,7 +62,7 @@ def welcome(f,r,k,name):
     l2.grid(padx=20,pady=12,row=2,column=2)
     l3 = Label(f,text="We hope you have a great experience!!!!",font="20")
     l3.grid(padx=20,pady=12,row=3,column=2,columnspan = 2, sticky =N)
-    Button(f,text="Proceed",command = lambda:mnu(f,r,k,name),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=2,sticky = S)
+    Button(f,text="Proceed",command = lambda:mnu(f,r,k),padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=2,sticky = S)
 
 
 bev = (        'Regular Tea',
@@ -107,8 +119,8 @@ icrm = (        'Vanilla',
                 'Butter Scotch')
 
 dict={'Regular Tea':20,'Masala Tea':25,'Coffee':25,'Cold Drink':25,'Bread Butter':30,'Bread Jam':30,'Veg. Sandwich':50,'Veg. Toast Sandwich':50,'Cheese Toast Sandwich':70,'Grilled Sandwich':70,
-'Tomato Soup':100,'Hot & Sour':100,'Veg. Noodle Soup':110,'Sweet Corn':110,'Veg Munchow':110,
-'Shahi Paneer':110,'Kadai Paneer':110,'Handi Paneer':120,'Palak Paneer':120,'Chilli Paneer':140,'Matar Mashroom':140,'Mix Veg':140,'Jeera Aloo':140,'Malai Kofta':140,'Aloo Matar':140,'Dal Fry':140,'Dal Makhani':150,'Dal Tadka':150,
+'Tomato Soup':100,'Hot & Sour':100,'Veg. Noodle Soup':110,'Sweet Corn':110,'Veg. Munchow':110,
+'Shahi Paneer':110,'Kadai Paneer':110,'Handi Paneer':120,'Palak Paneer':120,'Chilli Paneer':140,'Matar Mushroom':140,'Mix Veg':140,'Jeera Aloo':140,'Malai Kofta':140,'Aloo Matar':140,'Dal Fry':140,'Dal Makhani':150,'Dal Tadka':150,
 'Plain Roti':15,'Butter Roti':15,'Tandoori Roti':20,'Butter Naan':20,'Plain Rice':90,'Jeera Rice':90,'Veg Pulao':110,'Peas Pulao':110,
 'Plain Dosa':110,'Onion Dosa':110,'Masala Dosa':110,'Paneer Dosa':130,'Rice Idli':130,'Sambhar Vada':140,
 'Vanilla':60,'Strawberry':60,'Pineapple':60,'Butter Scotch':60}
@@ -118,7 +130,11 @@ flag = 0
 def get_order():
     global od_lis
     global num_lis
-    return [num_lis[1:],od_lis[1:]]
+    if 0 in od_lis:
+        od_lis.remove(0)
+    if 'example' in num_lis:
+        num_lis.remove('example')
+    return [num_lis,od_lis]
 
 def selected_item(lb,fm):
     global od_lis
@@ -158,7 +174,7 @@ def ad(k,frme):
         num_lis = num_lis + [1]
     show_item(frme)
 
-def mnu(fr,rt,k,name):
+def mnu(fr,rt,k):
     fr.destroy()
     frame3= Frame(rt,padx=10,pady=20)
     frame3.grid(row=0,column=0)
@@ -255,10 +271,12 @@ def mnu(fr,rt,k,name):
     choosen7.grid(column = 1, row = 18)
     choosen7.current()
     
-    b8 =Button(frame4,text="Done",command = lambda: bil(rt,k,name),padx=20,pady=10,font="20",bg="grey",fg="white")
+    b8 =Button(frame4,text="Done",command = lambda: bil(rt,k),padx=20,pady=10,font="20",bg="grey",fg="white")
     b8.grid(row=10,column=3)
 
-def bil(rt,k,name):
+def bil(rt,k):
+    global info
+    info.set_ordrlst(get_order()[1])
     global od_lis
     global num_lis
     rt.destroy()
@@ -267,13 +285,11 @@ def bil(rt,k,name):
     Label(rot,text="Taj Hotel",font="Helvetica 16 bold").grid(column=2,row=0)
     Label(rot,text="Manewada,Nagpur",font="Helvetica 16 bold").grid(column=2,row=1)
     Label(rot,text=(datetime.now())).grid(column=2,row=2)
-    Label(rot,text=name,font="Helvetica 10 bold").grid(column=2,row=3)
+    Label(rot,text=info.get_name(),font="Helvetica 10 bold").grid(column=2,row=3)
     cnt=1
     rw=5
     n_lis = get_order()[0]
     o_lis = get_order()[1]
-    num_lis = ['example']
-    od_lis = [0]
     Label(rot,text='Sr.No',font="Helvetica 16 bold").grid(column=0,row=4)
     Label(rot,text='Quantity',font="Helvetica 16 bold").grid(column=1,row=4)
     Label(rot,text='Item',font="Helvetica 16 bold").grid(column=2,row=4)
@@ -288,8 +304,10 @@ def bil(rt,k,name):
     bill=0
     for i in o_lis:
         bill=bill+n_lis[o_lis.index(i)]*dict[i]
+    info.set_bill(bill)
+    print(info)
     Label(rot,text=('Total Bill:'),font="Helvetica 16 bold").grid(column=2,row=rw+2)
     Label(rot,text=bill,font="Helvetica 16 bold").grid(column=3,row=rw+2)
     Label(rot,text='*********THANK YOU**********',font="Helvetica 16 bold").grid(column=2,row=rw+5)
-    Button(rot,text="NEXT",command=lambda:signin(k,rot)).grid(row=rw+10,column=2)
+    Button(rot,text="NEXT",command=lambda:[signin(k,rot),num_lis.clear(),od_lis.clear(),add_ins()]).grid(row=rw+10,column=2)
     rot.mainloop()
