@@ -1,11 +1,16 @@
-# Modules
 from tkinter import *
 from tkinter import ttk
 import random
 from datetime import datetime
 import time
+
+from numpy import exp
 from classes import *
 import pandas as pd
+from pandastable import Table
+import matplotlib.pyplot as plt
+import numpy as np
+
 info = "XYZ"
 df = pd.DataFrame(columns = ['Name','Contact No.','No. of persons','DOB','Bill'])
 def signin(k,m,frm):
@@ -22,28 +27,23 @@ def signin(k,m,frm):
 
         user = Label(frame1, text="Name",font="Algerian 16",anchor=W)
         people = Label(frame1, text="No. of people",font="Algerian 16",anchor=W)
-        contact_no=Label(frame1,text="Contact no.",font="Algerian 16",anchor=W)
 
         user.grid(row=1,padx=12,pady=20)
         people.grid(row=2,padx=12,pady=16)
-        contact_no.grid(row=3,padx=12,pady=16)
 
         uservalue = StringVar()
         peoplevalue = StringVar()
-        contactvalue = StringVar()
-        
+        contac = "1234"
 
         userentry = Entry(frame1, textvariable = uservalue)
         peopleentry = Entry(frame1, textvariable = peoplevalue)
-        contactentry = Entry(frame1, textvariable = contactvalue)
         userentry.grid(row=1,column=1)
         peopleentry.grid(row=2,column=1)
-        contactentry.grid(row=3,column=1)
-        Button(frame1,text="Submit",command = lambda: [welcome(frame1,root,k),create(uservalue.get(),peoplevalue.get(),contactvalue.get())],padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=5,column=0,rowspan = 2,columnspan = 2,sticky = SE)
+        Button(frame1,text="Submit",command = lambda: [welcome(frame1,root,k),create(uservalue.get(),peoplevalue.get(),contac)],padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=3,column=0,rowspan = 2,columnspan = 2,sticky = SE)
 
         label = Label(frame1,font=("Courier", 20, 'bold'), bg="gray", fg="white", bd =12,padx=10,pady=6)
         label.grid(row =0, column=2,columnspan = 2,sticky = W)
-        Button(frame1,text = "History",command = lambda: print(df),font="20",bg = "green",fg="white").grid(row =0,column = 4)
+        Button(frame1,text = "History",command = lambda: history(),font="20",bg = "green",fg="white").grid(row =0,column = 4)
         def digitalclock():
             text_input = time.strftime("%H:%M:%S")
             label.config(text=text_input)
@@ -51,24 +51,61 @@ def signin(k,m,frm):
         digitalclock()
     else:
         root3=Tk()
-        root3.title("Error")
         root3.geometry("500x500")
         label3=Label(root3,text="Incorrect password !!!!",font=20)
-        but3=Button(root3,text="Try Again",command=lambda:root3.destroy(),font=20,bg="gray")
+        label4=Label(root3,text="Close this window to try again",font=20)
         label3.grid(row=0,column=0)
-        but3.grid(row=2,column=1)
+        label4.grid(row=1,column=1)
         root3.mainloop()
-        
+
 def create(a,b,c):
     global info
     ins = Customer(a,b,c)
     info = ins
 
 def add_ins():
+    global info
     global df
     df = df.append({'Name': info.get_name(),'Contact No.': info.get_contactno(),'No. of persons': info.get_no_persons(),'DOB': info.get_date(),'Bill': info.get_bill()},ignore_index = True)
 
+def my_callback(toolbar):
+    Label(toolbar,text=df["Bill"].mean()).pack()
+def showgraph():
+    global info
+    x=np.arange(1,info.get_id()+1)
+    y=[]
+    for i in df["Bill"]:
+        y.append(i)
+    plt.xlabel('Customers')  
+    plt.ylabel("Total Bill")  
+    plt.title("variation of bill")
+    plt.plot(x,y)
+    plt.show()
+    
+def history():
+    hrot=Tk()
+    hrot.title("Customers Details")
 
+    global info
+
+    frame=ttk.Frame(hrot)
+    frame.pack(fill='both',expand=True)
+
+    pt=Table(frame,dataframe=df)
+    pt.show()
+
+    toolbar=ttk.Frame(hrot)
+    toolbar.pack()
+    
+
+    Label(toolbar,text=("No.of Customers visited till now:",info.get_id())).pack()
+    
+    Button(toolbar,text="view bill variations",command=lambda:showgraph()).pack()
+    Button(toolbar,text="Average Bill",command=lambda:my_callback(toolbar)).pack()
+
+    
+
+    
 def welcome(f,r,k):
     a=random.randrange(1,6)
     #print("Please proceed to table no.",a,"\n","We hope you have a nice experience!!!!")
@@ -116,7 +153,7 @@ chapti = (		'Plain Roti',
                 'Butter Roti',  
                 'Tandoori Roti', 
                 'Butter Naan')
- 
+
 rice = (        'Plain Rice',
                	'Jeera Rice',
                 'Veg Pulao',
@@ -178,7 +215,7 @@ def show_item(fm):
     lisbox.grid(row = 0, column = 0)
     btn =Button(fm,text="REMOVE", command=lambda: selected_item(lisbox,fm))
     btn.grid(row=0,column=1)
-    
+
 def ad(k,frme):
     global od_lis
     global num_lis
@@ -286,11 +323,9 @@ def mnu(fr,rt,k):
     b7.grid(row=19,column=1)
     choosen7.grid(column = 1, row = 18)
     choosen7.current()
-    
+
     b8 =Button(frame4,text="Done",command = lambda: bil(rt,k),padx=20,pady=10,font="20",bg="grey",fg="white")
     b8.grid(row=10,column=3)
-    but4=Button(frame4,text="Previous",command=lambda:signin(k,"hoteltaj@123",rt),font=20,bg="gray")
-    but4.grid(row=8,column=8)
 
 def bil(rt,k):
     global info
