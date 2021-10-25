@@ -49,6 +49,7 @@ def signin(k,m,frm):
         root3.geometry("500x500")
         label3=Label(root3,text="Incorrect password !!!!",font=20)
         label4=Label(root3,text="Close this window to try again",font=20)
+        Button(root3,text = "TRY AGAIN",command=lambda: root3.destroy(),font = "20",bg="red").grid(row=2,column =2)
         label3.grid(row=0,column=0)
         label4.grid(row=1,column=1)
         root3.mainloop()
@@ -59,6 +60,7 @@ def create(a,b,c):
     info = ins
 
 def add_ins():
+    global info
     global df
     df = df.append({'Name': info.get_name(),'Contact No.': info.get_contactno(),'No. of persons': info.get_no_persons(),'DOB': info.get_date(),'Bill': info.get_bill()},ignore_index = True)
 
