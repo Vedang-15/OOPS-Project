@@ -27,19 +27,24 @@ def signin(k,m,frm):
 
         user = Label(frame1, text="Name",font="Algerian 16",anchor=W)
         people = Label(frame1, text="No. of people",font="Algerian 16",anchor=W)
+        contact_no=Label(frame1,text="Contact no.",font="Algerian 16",anchor=W)
 
         user.grid(row=1,padx=12,pady=20)
         people.grid(row=2,padx=12,pady=16)
+        contact_no.grid(row=3,padx=12,pady=16)
 
         uservalue = StringVar()
         peoplevalue = StringVar()
-        contac = "1234"
+        contactvalue = StringVar()
 
         userentry = Entry(frame1, textvariable = uservalue)
         peopleentry = Entry(frame1, textvariable = peoplevalue)
+        contactentry = Entry(frame1, textvariable = contactvalue)
+
         userentry.grid(row=1,column=1)
         peopleentry.grid(row=2,column=1)
-        Button(frame1,text="Submit",command = lambda: [welcome(frame1,root,k),create(uservalue.get(),peoplevalue.get(),contac)],padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=3,column=0,rowspan = 2,columnspan = 2,sticky = SE)
+        contactentry.grid(row=3,column=1)
+        Button(frame1,text="Submit",command = lambda: [welcome(frame1,root,k),create(uservalue.get(),peoplevalue.get(),contactvalue.get())],padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=0,rowspan = 2,columnspan = 2,sticky = SE)
 
         label = Label(frame1,font=("Courier", 20, 'bold'), bg="gray", fg="white", bd =12,padx=10,pady=6)
         label.grid(row =0, column=2,columnspan = 2,sticky = W)
