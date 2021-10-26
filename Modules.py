@@ -61,6 +61,7 @@ def signin(k,m,frm):
         label4=Label(root3,text="Close this window to try again",font=20)
         label3.grid(row=0,column=0)
         label4.grid(row=1,column=1)
+        Button(root3,text="Try Again",command = lambda:root3.destroy(),font="20",bg = "red",fg="black").grid(row =2,column = 1)
         root3.mainloop()
 
 def create(a,b,c):
