@@ -14,6 +14,11 @@ import numpy as np
 info = "XYZ"
 df = pd.DataFrame(columns = ['Name','Contact No.','No. of persons','DOB','Bill'])
 def signin(k,m,frm):
+    def check_entry(*args):
+        if len(uservalue.get())==0:
+            userentry.configure({"background": "mistyrose"})
+        else:
+            userentry.configure({"background": "white"})
     global df
     if(m=="hoteltaj@123"):
         frm.destroy()
@@ -38,6 +43,7 @@ def signin(k,m,frm):
         contactvalue = StringVar()
 
         userentry = Entry(frame1, textvariable = uservalue)
+        uservalue.trace(mode="w",callback=check_entry)
         peopleentry = Entry(frame1, textvariable = peoplevalue)
         contactentry = Entry(frame1, textvariable = contactvalue)
 
@@ -64,6 +70,8 @@ def signin(k,m,frm):
         Button(root3,text="Try Again",command = lambda:root3.destroy(),font="20",bg = "red",fg="black").grid(row =2,column = 1)
         root3.mainloop()
 
+    
+
 def create(a,b,c):
     global info
     ins = Customer(a,b,c)
@@ -75,7 +83,8 @@ def add_ins():
     df = df.append({'Name': info.get_name(),'Contact No.': info.get_contactno(),'No. of persons': info.get_no_persons(),'DOB': info.get_date(),'Bill': info.get_bill()},ignore_index = True)
 
 def my_callback(toolbar):
-    Label(toolbar,text=df["Bill"].mean()).pack()
+    l = Label(toolbar,text=df["Bill"].mean())
+    l.pack()
 def showgraph():
     global info
     x=np.arange(1,info.get_id()+1)
