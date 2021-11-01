@@ -1,10 +1,11 @@
 from tkinter import *
+from tkinter import messagebox
 from tkinter import ttk
 import random
 from datetime import datetime
 import time
 
-from numpy import exp
+from numpy import RAISE, exp
 from classes import *
 import pandas as pd
 from pandastable import Table
@@ -14,13 +15,14 @@ import numpy as np
 info = "XYZ"
 df = pd.DataFrame(columns = ['Name','Contact No.','No. of persons','DOB','Bill'])
 def signin(k,m,frm):
-    def check_entry(*args):
-        if len(uservalue.get())==0:
-            userentry.configure({"background": "mistyrose"})
+    def check_entry(s,box):
+        if len(s.get())==0:
+            box.configure({"background": "mistyrose"})
         else:
-            userentry.configure({"background": "white"})
+            box.configure({"background": "white"})
+            
     global df
-    if(m=="hoteltaj@123"):
+    if(m=="hoteltaj@123" and k == "Manager"):
         frm.destroy()
         root = Tk()
         root.geometry("1000x1000")
@@ -43,14 +45,16 @@ def signin(k,m,frm):
         contactvalue = StringVar()
 
         userentry = Entry(frame1, textvariable = uservalue)
-        uservalue.trace(mode="w",callback=check_entry)
+        uservalue.trace("w", lambda name, index, mode, uservalue=uservalue:check_entry(uservalue,userentry))
         peopleentry = Entry(frame1, textvariable = peoplevalue)
+        peoplevalue.trace("w", lambda name, index, mode, peoplevalue=peoplevalue:check_entry(peoplevalue,peopleentry))
         contactentry = Entry(frame1, textvariable = contactvalue)
+        contactvalue.trace("w", lambda name, index, mode, contactvalue=contactvalue:check_entry(contactvalue,contactentry))
 
         userentry.grid(row=1,column=1)
         peopleentry.grid(row=2,column=1)
         contactentry.grid(row=3,column=1)
-        Button(frame1,text="Submit",command = lambda: [welcome(frame1,root,k),create(uservalue.get(),peoplevalue.get(),contactvalue.get())],padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=0,rowspan = 2,columnspan = 2,sticky = SE)
+        Button(frame1,text="Submit",command = lambda: [create(uservalue.get(),peoplevalue.get(),contactvalue.get(),frame1,root,k)],padx=20,pady=10,font="20",bg="grey",fg="white").grid(row=4,column=0,rowspan = 2,columnspan = 2,sticky = SE)
 
         label = Label(frame1,font=("Courier", 20, 'bold'), bg="gray", fg="white", bd =12,padx=10,pady=6)
         label.grid(row =0, column=2,columnspan = 2,sticky = W)
@@ -61,21 +65,25 @@ def signin(k,m,frm):
             label.after(200, digitalclock)
         digitalclock()
     else:
-        root3=Tk()
-        root3.geometry("500x500")
-        label3=Label(root3,text="Incorrect password !!!!",font=20)
-        label4=Label(root3,text="Close this window to try again",font=20)
-        label3.grid(row=0,column=0)
-        label4.grid(row=1,column=1)
-        Button(root3,text="Try Again",command = lambda:root3.destroy(),font="20",bg = "red",fg="black").grid(row =2,column = 1)
-        root3.mainloop()
+        messagebox.showerror("showerror", "Invalid username or password")
 
     
 
-def create(a,b,c):
-    global info
-    ins = Customer(a,b,c)
-    info = ins
+def create(a,b,c,frame1,root,k):
+    try:
+        assert len(a)!=0,'Name field is empty'
+        assert len(b)!=0,'NOP field is empty'
+        assert int(b)!=int,'Invalid entry'
+        assert len(c)!=0,'No contact no. found'
+        assert int(c)!=int,'Invalid contact no.'
+    except:
+        messagebox.showerror("showerror", "Invalid entries")
+    else:
+        global info
+        ins = Customer(a,b,c)
+        info = ins
+        welcome(frame1,root,k)
+
 
 def add_ins():
     global info
@@ -98,27 +106,30 @@ def showgraph():
     plt.show()
     
 def history():
-    hrot=Tk()
-    hrot.title("Customers Details")
+    try:
+        assert df.empty !=True,'No entries'
+    except:
+        messagebox.showerror("showerror", "No entries found")
+    else:
+        hrot=Tk()
+        hrot.title("Customers Details")
 
-    global info
+        global info
 
-    frame=ttk.Frame(hrot)
-    frame.pack(fill='both',expand=True)
+        frame=ttk.Frame(hrot)
+        frame.pack(fill='both',expand=True)
 
-    pt=Table(frame,dataframe=df)
-    pt.show()
+        pt=Table(frame,dataframe=df)
+        pt.show()
 
-    toolbar=ttk.Frame(hrot)
-    toolbar.pack()
-    
+        toolbar=ttk.Frame(hrot)
+        toolbar.pack()
+        
 
-    Label(toolbar,text=("No.of Customers visited till now:",info.get_id())).pack()
-    
-    Button(toolbar,text="view bill variations",command=lambda:showgraph()).pack()
-    Button(toolbar,text="Average Bill",command=lambda:my_callback(toolbar)).pack()
-
-    
+        Label(toolbar,text=("No.of Customers visited till now:",info.get_id())).pack()
+        
+        Button(toolbar,text="view bill variations",command=lambda:showgraph()).pack()
+        Button(toolbar,text="Average Bill",command=lambda:my_callback(toolbar)).pack()
 
     
 def welcome(f,r,k):
@@ -339,8 +350,17 @@ def mnu(fr,rt,k):
     choosen7.grid(column = 1, row = 18)
     choosen7.current()
 
-    b8 =Button(frame4,text="Done",command = lambda: bil(rt,k),padx=20,pady=10,font="20",bg="grey",fg="white")
+    b8 =Button(frame4,text="Done",command = lambda: [check_bill(rt,k)],padx=20,pady=10,font="20",bg="grey",fg="white")
     b8.grid(row=10,column=3)
+
+def check_bill(rt,k):
+    try:
+        o_lis = get_order()[1]
+        assert len(o_lis)!=0,'No entries for bill'
+    except:
+        messagebox.showerror("showerror", "No items were ordered")
+    else:
+        bil(rt,k)
 
 def bil(rt,k):
     global info
