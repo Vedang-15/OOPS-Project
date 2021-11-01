@@ -1,3 +1,4 @@
+from os import name
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
@@ -12,8 +13,11 @@ from pandastable import Table
 import matplotlib.pyplot as plt
 import numpy as np
 
-info = "XYZ"
-df = pd.DataFrame(columns = ['Name','Contact No.','No. of persons','DOB','Bill'])
+global info 
+try:
+    df = pd.read_excel('entries.xlsx')
+except:
+    df = pd.DataFrame(columns = ['Name','Contact No.','No. of persons','DOB','Bill'])
 def signin(k,m,frm):
     def check_entry(s,box):
         if len(s.get())==0:
@@ -58,7 +62,6 @@ def signin(k,m,frm):
 
         label = Label(frame1,font=("Courier", 20, 'bold'), bg="gray", fg="white", bd =12,padx=10,pady=6)
         label.grid(row =0, column=2,columnspan = 2,sticky = W)
-        Button(frame1,text = "History",command = lambda: history(),font="20",bg = "green",fg="white").grid(row =0,column = 4)
         def digitalclock():
             text_input = time.strftime("%H:%M:%S")
             label.config(text=text_input)
@@ -89,18 +92,19 @@ def add_ins():
     global info
     global df
     df = df.append({'Name': info.get_name(),'Contact No.': info.get_contactno(),'No. of persons': info.get_no_persons(),'DOB': info.get_date(),'Bill': info.get_bill()},ignore_index = True)
+    df.to_excel('entries.xlsx')
 
-def showgraph():
-    global info
-    x=np.arange(1,info.get_id()+1)
-    y=[]
-    for i in df["Bill"]:
-        y.append(i)
-    plt.xlabel('Customers')  
-    plt.ylabel("Total Bill")  
-    plt.title("variation of bill")
-    plt.plot(x,y)
-    plt.show()
+# def showgraph():
+#     global info
+#     x=np.arange(1,info.get_id()+1)
+#     y=[]
+#     for i in df["Bill"]:
+#         y.append(i)
+#     plt.xlabel('Customers')  
+#     plt.ylabel("Total Bill")  
+#     plt.title("variation of bill")
+#     plt.plot(x,y)
+#     plt.show()
     
 def history():
     try:
@@ -123,9 +127,8 @@ def history():
         toolbar.pack()
         
 
-        Label(toolbar,text=("No.of Customers visited till now:",info.get_id()),font=("Courier", 10, 'bold')).pack()
+        Label(toolbar,text=("No.of Customers visited till now:",df.shape[0]),font=("Courier", 10, 'bold')).pack()
         
-        Button(toolbar,text="view bill variations",command=lambda:showgraph()).pack()
         Button(toolbar,text=("Average Bill",df["Bill"].mean()),font=("Courier", 10, 'bold')).pack()
 
     
@@ -148,7 +151,7 @@ bev = (        'Regular Tea',
                 'Bread Butter',
                 'Bread Jam',
                 'Veg. Sandwich',
-                'Veg. Toast Sandwich'
+                'Veg. Toast Sandwich',
                 'Cheese Toast Sandwich',
                 'Grilled Sandwich')
 
@@ -202,7 +205,6 @@ dict={'Regular Tea':20,'Masala Tea':25,'Coffee':25,'Cold Drink':25,'Bread Butter
 'Vanilla':60,'Strawberry':60,'Pineapple':60,'Butter Scotch':60}
 num_lis = ['example'] 
 od_lis = [0]
-flag = 0
 def get_order():
     global od_lis
     global num_lis
@@ -213,21 +215,26 @@ def get_order():
     return [num_lis,od_lis]
 
 def selected_item(lb,fm):
-    global od_lis
-    global num_lis
-    itm = lb.get(lb.curselection())
-    for i in range(len(itm)):
-        if itm[i]=='*':
-           t = i
-           r = get_order()[1].index(itm[:t-1])
-           if get_order()[0][r]==1:
-               p = od_lis.index(itm[:t-1])
-               od_lis.remove(itm[:t-1])
-               num_lis.pop(p)
-           else:
-               p = od_lis.index(itm[:t-1])
-               num_lis[p] = num_lis[p] -1
-    show_item(fm)
+    try:
+        x = 1/len(get_order()[0])
+    except:
+        messagebox.showerror("showerror", "No entries found")
+    else:
+        global od_lis
+        global num_lis
+        itm = lb.get(lb.curselection())
+        for i in range(len(itm)):
+            if itm[i]=='*': 
+                t = i
+                r = get_order()[1].index(itm[:t-1])
+                if get_order()[0][r]==1:
+                    p = od_lis.index(itm[:t-1])
+                    od_lis.remove(itm[:t-1])
+                    num_lis.pop(p)
+                else:
+                    p = od_lis.index(itm[:t-1])
+                    num_lis[p] = num_lis[p] -1
+        show_item(fm)
 
 def show_item(fm):
     lisbox = Listbox(fm,width = 30,height = 30)
@@ -242,13 +249,18 @@ def show_item(fm):
 def ad(k,frme):
     global od_lis
     global num_lis
-    if k in od_lis:
-        j = od_lis.index(k)
-        num_lis[j] = num_lis[j] + 1
+    try:
+        x =1/len(k)
+    except:
+        messagebox.showerror("showerror", "No item to add")
     else:
-        od_lis = od_lis + [k]
-        num_lis = num_lis + [1]
-    show_item(frme)
+        if k in od_lis:
+            j = od_lis.index(k)
+            num_lis[j] = num_lis[j] + 1
+        else:
+            od_lis = od_lis + [k]
+            num_lis = num_lis + [1]
+        show_item(frme)
 
 def mnu(fr,rt,k):
     fr.destroy()
