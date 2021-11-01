@@ -90,9 +90,6 @@ def add_ins():
     global df
     df = df.append({'Name': info.get_name(),'Contact No.': info.get_contactno(),'No. of persons': info.get_no_persons(),'DOB': info.get_date(),'Bill': info.get_bill()},ignore_index = True)
 
-def my_callback(toolbar):
-    l = Label(toolbar,text=df["Bill"].mean())
-    l.pack()
 def showgraph():
     global info
     x=np.arange(1,info.get_id()+1)
@@ -126,10 +123,10 @@ def history():
         toolbar.pack()
         
 
-        Label(toolbar,text=("No.of Customers visited till now:",info.get_id())).pack()
+        Label(toolbar,text=("No.of Customers visited till now:",info.get_id()),font=("Courier", 10, 'bold')).pack()
         
         Button(toolbar,text="view bill variations",command=lambda:showgraph()).pack()
-        Button(toolbar,text="Average Bill",command=lambda:my_callback(toolbar)).pack()
+        Button(toolbar,text=("Average Bill",df["Bill"].mean()),font=("Courier", 10, 'bold')).pack()
 
     
 def welcome(f,r,k):
